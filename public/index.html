@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rocket</title>
+<meta name="description" content="Rocket réunit autour de votre channel manager le ménage, le linge, les accès, les écrans, le stock et les finances de vos locations.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg:#f6f6f9;
+  --bg-raised:#ffffff;
+  --ink:#0d1526;
+  --ink-soft:#4a5468;
+  --line:#dfe2ea;
+  --brass:#f5a524;
+  --brass-deep:#b86e00;
+  --clay:#ff4d5e;
+  --moss:#0fae8c;
+  --card:#ffffff;
+  --shadow: 0 18px 40px -22px rgba(13,21,38,0.45);
+  --radius:18px;
+  --focus:#0d1526;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#0b1220;
+  --bg-raised:#111a2e;
+  --ink:#f2f4f9;
+  --ink-soft:#a9b3c7;
+  --line:#243049;
+  --brass:#ffc15a;
+  --brass-deep:#ffd58c;
+  --clay:#ff5c6c;
+  --moss:#3fd6b2;
+  --card:#131d33;
+  --shadow: 0 20px 44px -22px rgba(0,0,0,0.7);
+  --focus:#f2f4f9;
+  }
+}
+
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0b1220;
+  --bg-raised:#111a2e;
+  --ink:#f2f4f9;
+  --ink-soft:#a9b3c7;
+  --line:#243049;
+  --brass:#ffc15a;
+  --brass-deep:#ffd58c;
+  --clay:#ff5c6c;
+  --moss:#3fd6b2;
+  --card:#131d33;
+  --shadow: 0 20px 44px -22px rgba(0,0,0,0.7);
+  --focus:#f2f4f9;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Manrope', sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+h1,h2,h3,.display{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0;
+  color:var(--ink);
+}
+
+a{color:inherit;}
+img,svg{max-width:100%;display:block;}
+
+.wrap{
+  width:100%;
+  max-width:1120px;
+  margin:0 auto;
+  padding-inline:max(16px, env(safe-area-inset-left));
+}
+
+.gutter{padding-left:16px;padding-right:16px;}
+
+/* ---- topbar ---- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;
+  max-width:1120px;margin:0 auto;
+}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Fraunces', serif;font-weight:700;font-size:1.25rem;
+  text-decoration:none;color:var(--ink);
+}
+.brand svg{width:30px;height:30px;flex:none;}
+.nav-links{display:none;gap:26px;font-weight:600;font-size:0.94rem;}
+.nav-links a{text-decoration:none;color:var(--ink-soft);transition:color .15s;}
+.nav-links a:hover{color:var(--ink);}
+@media (min-width:820px){.nav-links{display:flex;}}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:999px;
+  padding:12px 22px;
+  font-family:'Manrope',sans-serif;
+  font-weight:700;font-size:0.94rem;
+  border:1px solid transparent;
+  cursor:pointer;
+  text-decoration:none;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s;
+}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--clay);color:#ffffff;box-shadow:0 10px 24px -10px color-mix(in srgb, var(--clay) 70%, transparent);}
+.btn-primary:hover{background:color-mix(in srgb, var(--clay) 85%, #000);transform:translateY(-1px);}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink);}
+.btn-ghost:hover{border-color:var(--ink-soft);}
+.btn:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible{
+  outline:3px solid var(--focus);outline-offset:2px;
+}
+
+/* ---- hero ---- */
+.hero{
+  padding:64px 0 56px;
+  position:relative;
+  background:radial-gradient(900px 420px at 85% 10%, color-mix(in srgb, var(--clay) 14%, transparent), transparent 60%), radial-gradient(700px 380px at 5% 90%, color-mix(in srgb, var(--brass) 14%, transparent), transparent 60%);
+}
+.hero-grid{
+  display:grid;gap:40px;
+  grid-template-columns:1fr;
+  align-items:center;
+}
+@media (min-width:900px){
+  .hero-grid{grid-template-columns:1.05fr 0.95fr;}
+}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--brass-deep);
+  background:color-mix(in srgb, var(--brass) 16%, transparent);
+  border:1px solid color-mix(in srgb, var(--brass) 40%, transparent);
+  border-radius:999px;padding:6px 14px;margin-bottom:18px;
+}
+.hero h1{
+  font-size:clamp(2.1rem, 5.4vw, 3.4rem);
+  line-height:1.06;
+}
+.hero h1 em{
+  font-style:normal;color:var(--clay);
+}
+.hero p.lead{
+  margin-top:18px;font-size:1.08rem;color:var(--ink-soft);max-width:52ch;
+}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;}
+.hero-meta{
+  margin-top:26px;display:flex;gap:22px;flex-wrap:wrap;
+  font-size:0.85rem;color:var(--ink-soft);
+}
+.hero-meta span{display:flex;align-items:center;gap:6px;}
+.hero-meta svg{width:16px;height:16px;color:var(--moss);}
+
+.hero-art{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:22px;
+  box-shadow:var(--shadow);
+}
+.hero-art svg{width:100%;height:auto;}
+
+/* ---- sections ---- */
+section{padding:64px 0;}
+.section-head{max-width:640px;margin-bottom:36px;}
+.section-head .kicker{margin-bottom:14px;}
+.section-head h2{font-size:clamp(1.6rem,3.4vw,2.3rem);}
+.section-head p{color:var(--ink-soft);margin-top:12px;font-size:1.02rem;}
+
+.alt{background:var(--bg-raised);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+
+/* ---- offer cards ---- */
+.offers{
+  display:grid;gap:22px;
+  grid-template-columns:1fr;
+}
+@media (min-width:760px){.offers{grid-template-columns:repeat(3,1fr);}}
+.offer-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:26px;
+  display:flex;flex-direction:column;gap:14px;
+  box-shadow:var(--shadow);
+}
+.offer-card .icon{
+  width:44px;height:44px;color:var(--clay);
+}
+.offer-card h3{font-size:1.28rem;}
+.offer-card .for{font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--moss);}
+.offer-card ul{margin:0;padding-left:18px;color:var(--ink-soft);font-size:0.94rem;display:flex;flex-direction:column;gap:6px;}
+.offer-card ul li::marker{color:var(--brass);}
+
+.options-row{
+  margin-top:30px;
+  display:flex;flex-wrap:wrap;gap:10px;
+}
+.chip{
+  border:1px dashed var(--line);
+  border-radius:999px;
+  padding:9px 16px;
+  font-size:0.86rem;font-weight:600;
+  color:var(--ink-soft);
+  background:var(--bg-raised);
+}
+
+.deploy-note{
+  margin-top:26px;
+  display:flex;gap:14px;align-items:flex-start;
+  background:color-mix(in srgb, var(--moss) 10%, transparent);
+  border:1px solid color-mix(in srgb, var(--moss) 30%, transparent);
+  border-radius:14px;padding:16px 18px;
+}
+.deploy-note svg{width:22px;height:22px;flex:none;color:var(--moss);margin-top:2px;}
+.deploy-note p{margin:0;font-size:0.92rem;color:var(--ink-soft);}
+
+/* ---- how it works ---- */
+.steps{
+  display:grid;gap:26px;
+  grid-template-columns:1fr;
+}
+@media (min-width:760px){.steps{grid-template-columns:repeat(4,1fr);}}
+.step{
+  position:relative;
+  padding-top:18px;
+  border-top:2px solid var(--brass);
+}
+.step h3{font-size:1.06rem;margin-bottom:8px;}
+.step p{color:var(--ink-soft);font-size:0.92rem;margin:0;}
+
+/* ---- story ---- */
+.story{
+  display:grid;gap:32px;
+  grid-template-columns:1fr;
+  align-items:center;
+}
+@media (min-width:860px){.story{grid-template-columns:0.9fr 1.1fr;}}
+.story-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px;box-shadow:var(--shadow);
+}
+.story-card svg{width:100%;height:auto;margin-bottom:18px;}
+.story blockquote{
+  margin:0;font-family:'Fraunces',serif;font-weight:500;
+  font-size:clamp(1.2rem,2.6vw,1.6rem);line-height:1.4;color:var(--ink);
+}
+.story cite{display:block;margin-top:18px;font-style:normal;font-weight:700;color:var(--ink-soft);font-size:0.92rem;}
+
+/* ---- integrations ---- */
+.integrations{
+  display:flex;flex-wrap:wrap;gap:14px;
+}
+.integration{
+  display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:12px 16px;
+  font-weight:700;font-size:0.92rem;
+  flex:1 1 150px;
+}
+.integration svg{width:24px;height:24px;color:var(--brass-deep);flex:none;}
+
+/* ---- faq ---- */
+.faq-item{
+  border-bottom:1px solid var(--line);
+  padding:18px 0;
+}
+.faq-item summary{
+  cursor:pointer;font-weight:700;font-size:1.02rem;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary .plus{
+  flex:none;width:22px;height:22px;color:var(--clay);transition:transform .2s ease;
+}
+.faq-item[open] summary .plus{transform:rotate(45deg);}
+.faq-item p{color:var(--ink-soft);margin:12px 0 0;max-width:65ch;}
+
+/* ---- contact ---- */
+.contact-grid{
+  display:grid;gap:34px;grid-template-columns:1fr;
+}
+@media (min-width:860px){.contact-grid{grid-template-columns:0.9fr 1.1fr;}}
+.contact-info h2{font-size:clamp(1.6rem,3.2vw,2.2rem);}
+.contact-info p{color:var(--ink-soft);margin-top:12px;}
+.contact-info ul{list-style:none;padding:0;margin:24px 0 0;display:flex;flex-direction:column;gap:14px;}
+.contact-info li{display:flex;gap:10px;align-items:center;font-weight:600;font-size:0.94rem;}
+.contact-info svg{width:20px;height:20px;color:var(--moss);flex:none;}
+
+form.demo{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:16px;
+}
+.field{display:flex;flex-direction:column;gap:6px;}
+label{font-size:0.85rem;font-weight:700;color:var(--ink-soft);}
+input,textarea,select{
+  font-family:'Manrope',sans-serif;font-size:0.98rem;
+  padding:12px 14px;border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--bg);color:var(--ink);
+}
+textarea{resize:vertical;min-height:90px;}
+.two-col{display:grid;gap:16px;grid-template-columns:1fr;}
+@media (min-width:520px){.two-col{grid-template-columns:1fr 1fr;}}
+.form-msg{
+  display:none;
+  padding:14px 16px;border-radius:12px;
+  background:color-mix(in srgb, var(--moss) 16%, transparent);
+  border:1px solid color-mix(in srgb, var(--moss) 40%, transparent);
+  color:var(--ink);font-weight:600;font-size:0.92rem;
+}
+.form-msg.visible{display:block;}
+
+/* ---- footer ---- */
+footer{
+  border-top:1px solid var(--line);
+  padding:40px 0 30px;
+  color:var(--ink-soft);font-size:0.86rem;
+}
+.footer-grid{
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;
+}
+.footer-brand{display:flex;align-items:center;gap:8px;font-family:'Fraunces',serif;font-weight:700;color:var(--ink);font-size:1.1rem;}
+.footer-brand svg{width:22px;height:22px;}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+.footer-links a{text-decoration:none;color:var(--ink-soft);}
+.footer-links a:hover{color:var(--ink);}
+.footer-bottom{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);}
+
+
+/* ---- pricing ---- */
+.plans{display:grid;gap:22px;grid-template-columns:1fr;}
+@media (min-width:860px){.plans{grid-template-columns:repeat(3,1fr);}}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;gap:14px;}
+.plan.featured{border:2px solid var(--clay);box-shadow:var(--shadow);}
+.plan .badge{align-self:flex-start;font-size:0.74rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#fff;background:var(--clay);border-radius:999px;padding:4px 10px;}
+.plan h3{font-size:1.25rem;}
+.price{font-family:'Fraunces',serif;font-weight:700;font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums;}
+.price small{font-family:'Manrope',sans-serif;font-size:0.86rem;font-weight:600;color:var(--ink-soft);margin-left:4px;}
+.plan .btn{margin-top:auto;}
+.plan ul{margin:0;padding-left:18px;color:var(--ink-soft);font-size:0.94rem;display:flex;flex-direction:column;gap:6px;}
+.plan ul li::marker{color:var(--brass);}
+.addons{margin-top:28px;border:1px solid var(--line);border-radius:var(--radius);overflow-x:auto;background:var(--card);}
+.addons table{width:100%;border-collapse:collapse;min-width:520px;font-size:0.94rem;}
+.addons th,.addons td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);}
+.addons th{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);}
+.addons tr:last-child td{border-bottom:0;}
+.addons td.p{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.pricing-notes{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;}
+
+@media (max-width:560px){.hide-sm{display:none;}}
+
+/* ---- features ---- */
+.features{display:grid;gap:18px;grid-template-columns:1fr;}
+@media (min-width:700px){.features{grid-template-columns:repeat(2,1fr);}}
+@media (min-width:1000px){.features{grid-template-columns:repeat(3,1fr);}}
+.feature{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:8px;}
+.feature h3{font-size:1.05rem;}
+.feature p{margin:0;color:var(--ink-soft);font-size:0.92rem;}
+.feature .tag{align-self:flex-start;font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--moss);}
+
+.theme-toggle{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--line);border-radius:999px;
+  padding:8px 12px;background:var(--bg-raised);cursor:pointer;
+  font-size:0.82rem;font-weight:700;color:var(--ink);
+}
+.theme-toggle svg{width:16px;height:16px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 3c4 3 6 8 6 13 0 3-1 5-2 6l-4 4-4-4c-1-1-2-3-2-6 0-5 2-10 6-13z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="16" cy="14" r="2.6" fill="currentColor"/>
+        <path d="M12 22l-3 6M20 22l3 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      Rocket
+    </a>
+    <nav class="nav-links" aria-label="Navigation principale">
+      <a href="#offres">Offres</a>
+      <a href="#fonctions">Fonctionnalités</a>
+      <a href="#fonctionnement">Fonctionnement</a>
+      <a href="#histoire">Histoire</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span id="themeLabel">Sombre</span>
+      </button>
+      <a class="btn btn-ghost hide-sm" href="#contact">Démo</a>
+      <a class="btn btn-primary" href="https://console.rocket.app/inscription">S'inscrire</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="kicker">Rocket Location</span>
+        <h1>Le clé-en-main des locations courte durée, <em>de la réservation au ménage.</em></h1>
+        <p class="lead">Rocket Location synchronise vos réservations Lodgify, écrit à vos voyageurs, prépare les accès de chaque séjour et prépare le ménage après chaque départ — pendant que vous gardez l'œil sur les finances.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://console.rocket.app/inscription">Essayer gratuitement 30 jours</a>
+          <a class="btn btn-ghost" href="#contact">Demander une démo</a>
+        </div>
+        <div class="hero-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l2.2 4.5 5 .7-3.6 3.5.8 5-4.4-2.3L7.6 16.7l.8-5L4.8 8.2l5-.7L12 3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            Lodgify, Airbnb, Booking
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.4"/></svg>
+            Codes d'accès automatiques
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16M4 12l4-4M4 12l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Hébergé en Europe
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 420 340" fill="none">
+          <rect x="1" y="1" width="418" height="338" rx="16" fill="none" stroke="var(--line)"/>
+          <!-- floorplan motif -->
+          <g stroke="var(--brass)" stroke-width="1.4" opacity="0.9">
+            <rect x="30" y="30" width="170" height="130" rx="4"/>
+            <rect x="210" y="30" width="180" height="80" rx="4"/>
+            <rect x="210" y="120" width="180" height="90" rx="4"/>
+            <rect x="30" y="170" width="170" height="140" rx="4"/>
+          </g>
+          <line x1="30" y1="30" x2="200" y2="160" stroke="var(--line)" stroke-width="1"/>
+          <!-- door with key -->
+          <g transform="translate(90,80)">
+            <circle cx="0" cy="0" r="34" fill="var(--card)" stroke="var(--clay)" stroke-width="2"/>
+            <path d="M-14 0a14 14 0 1 1 14 14" stroke="var(--clay)" stroke-width="2" fill="none"/>
+            <circle cx="-14" cy="0" r="5" fill="none" stroke="var(--clay)" stroke-width="2"/>
+            <path d="M0 14v14M0 22h7M0 28h5" stroke="var(--clay)" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <!-- booking calendar -->
+          <g transform="translate(255,50)">
+            <rect x="0" y="0" width="110" height="46" rx="6" fill="var(--card)" stroke="var(--moss)" stroke-width="1.6"/>
+            <line x1="0" y1="14" x2="110" y2="14" stroke="var(--moss)" stroke-width="1.2"/>
+            <rect x="10" y="22" width="18" height="14" rx="2" fill="var(--moss)" opacity="0.7"/>
+            <rect x="34" y="22" width="18" height="14" rx="2" fill="var(--moss)" opacity="0.35"/>
+            <rect x="58" y="22" width="18" height="14" rx="2" fill="var(--moss)" opacity="0.35"/>
+          </g>
+          <!-- cleaning checklist -->
+          <g transform="translate(255,150)">
+            <rect x="0" y="0" width="110" height="72" rx="6" fill="var(--card)" stroke="var(--brass)" stroke-width="1.6"/>
+            <circle cx="14" cy="16" r="5" fill="none" stroke="var(--brass)" stroke-width="1.6"/>
+            <path d="M11 16l2 2 4-4" stroke="var(--brass)" stroke-width="1.6" fill="none"/>
+            <line x1="26" y1="16" x2="96" y2="16" stroke="var(--brass)" stroke-width="1.2"/>
+            <circle cx="14" cy="36" r="5" fill="none" stroke="var(--brass)" stroke-width="1.6"/>
+            <path d="M11 36l2 2 4-4" stroke="var(--brass)" stroke-width="1.6" fill="none"/>
+            <line x1="26" y1="36" x2="96" y2="36" stroke="var(--brass)" stroke-width="1.2"/>
+            <circle cx="14" cy="56" r="5" fill="none" stroke="var(--brass)" stroke-width="1.6"/>
+            <line x1="26" y1="56" x2="80" y2="56" stroke="var(--brass)" stroke-width="1.2"/>
+          </g>
+          <!-- finances chart -->
+          <g transform="translate(50,210)">
+            <rect x="0" y="0" width="130" height="70" rx="6" fill="var(--card)" stroke="var(--ink-soft)" stroke-width="1.2"/>
+            <polyline points="10,55 30,40 50,45 70,25 90,32 110,15" fill="none" stroke="var(--clay)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="offres" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Les offres</span>
+        <h2>Trois briques, une même maison.</h2>
+        <p>Rocket se compose de briques indépendantes. Prenez la suite complète ou une seule brique, en SaaS, en auto-hébergé avec licence, ou par API.</p>
+      </div>
+
+      <div class="offers">
+        <article class="offer-card">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="7" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M8 7V5a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.5"/><path d="M3 12h18" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span class="for">Pour les loueurs & conciergeries</span>
+          <h3>Rocket Location</h3>
+          <ul>
+            <li>PMS synchronisé avec Lodgify</li>
+            <li>Place : accès, ménage, stock</li>
+            <li>Mailer : messages voyageurs, e-mails</li>
+            <li>Cloud : documents et livret d'accueil</li>
+          </ul>
+        </article>
+
+        <article class="offer-card">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 11l8-6 8 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><rect x="10" y="14" width="4" height="5" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span class="for">Pour tout lieu à gérer</span>
+          <h3>Rocket Lieux</h3>
+          <ul>
+            <li>Domotique : Home Assistant, Homey</li>
+            <li>Serrures connectées Nuki</li>
+            <li>Ménage, stock, documents du lieu</li>
+            <li>Maisons, résidences secondaires, bureaux</li>
+          </ul>
+        </article>
+
+        <article class="offer-card">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="8" x2="16" y2="8" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="16" x2="13" y2="16" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span class="for">Pour les PME</span>
+          <h3>Rocket Documents</h3>
+          <ul>
+            <li>Cloud de fichiers d'entreprise</li>
+            <li>Doc Fusion : modèles DOCX/PDF</li>
+            <li>Dispatch : publipostage</li>
+            <li>Print & Mailer intégrés</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="options-row" aria-label="Options disponibles">
+        <span class="chip">Boîtes mail partagées</span>
+        <span class="chip">Domotique avancée</span>
+        <span class="chip">Stockage additionnel</span>
+        <span class="chip">SMS</span>
+        <span class="chip">Domaine personnalisé</span>
+        <span class="chip">Marque blanche</span>
+      </div>
+
+      <div class="deploy-note">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="1.5"/></svg>
+        <p>Chaque brique s'achète seule : en SaaS géré par nos soins, en auto-hébergé avec licence sur votre infrastructure, ou via API pour l'intégrer à votre propre outil.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="fonctions">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Fonctionnalités</span>
+        <h2>Tout ce qui se passe dans vos logements, au même endroit.</h2>
+        <p>Rocket ne remplace pas votre channel manager : il s'y branche et réunit autour de lui le ménage, le linge, les accès, les écrans, le stock et les finances.</p>
+      </div>
+      <div class="features">
+        <article class="feature"><span class="tag">Rocket Host</span><h3>Tableau de bord intelligent</h3><p>Chaque arrivée d'un coup d'œil : ménage, linge, accès, écran, paiement. Les alertes croisent tous vos services.</p></article>
+        <article class="feature"><span class="tag">Rocket Clean</span><h3>Assistant de ménage à la voix</h3><p>L'assistant lit les étapes, comprend « j'ai fini la salle de bain » ou « il manque du café », et guide la tournée photo de fin.</p></article>
+        <article class="feature"><span class="tag">Rocket Clean</span><h3>Compte rendu automatique</h3><p>Étapes faites, stock, incidents et photos par pièce : le compte rendu est prêt à la fin du ménage.</p></article>
+        <article class="feature"><span class="tag">Rocket Clean</span><h3>Linge et blanchisserie</h3><p>Kits par logement, linge propre, sale ou au lavage, lots comptés à l'aller et au retour, alertes avant chaque arrivée.</p></article>
+        <article class="feature"><span class="tag">Rocket Clean</span><h3>Ménages personnels et récurrents</h3><p>Ménages de location, personnels ou d'entretien dans une seule liste, avec récurrences et détection des conflits avec les séjours.</p></article>
+        <article class="feature"><span class="tag">Rocket Stock</span><h3>Courses sans oubli</h3><p>Panier automatique des articles en stock bas, groupé par magasin, codes-barres, panier Amazon pré-rempli et bons de commande par e-mail.</p></article>
+        <article class="feature"><span class="tag">Rocket Cast</span><h3>Écran d'accueil sur la TV</h3><p>Appairage par un simple code, bienvenue au prénom du voyageur, Wi-Fi, météo et départ. Continue de fonctionner hors ligne.</p></article>
+        <article class="feature"><span class="tag">Rocket Lieux</span><h3>Serrures et domotique</h3><p>Codes d'accès préparés pour chaque séjour, envoyés en un clic. Nuki, Home Assistant, Homey.</p></article>
+        <article class="feature"><span class="tag">Mobile</span><h3>Sur le téléphone de l'équipe</h3><p>Clean et Stock s'installent comme une application, sans store, et gardent le travail en cours même sans réseau.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="fonctionnement">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Comment ça marche</span>
+        <h2>Un compte, une connexion, vos briques.</h2>
+        <p>Rocket est pensé comme un seul environnement : vous créez un compte, vous activez les applications dont vous avez besoin, et tout communique sans double saisie.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>Un compte unique</h3>
+          <p>Une seule identité pour accéder à toutes les applications Rocket auxquelles vous êtes abonné.</p>
+        </div>
+        <div class="step">
+          <h3>Connexion unique</h3>
+          <p>Une seule connexion entre Location, Lieux et Documents : pas de mot de passe à retenir par brique.</p>
+        </div>
+        <div class="step">
+          <h3>Seulement ce qu'il faut</h3>
+          <p>Vous ne voyez et ne payez que les briques que vous avez activées, rien d'imposé.</p>
+        </div>
+        <div class="step">
+          <h3>Données cloisonnées</h3>
+          <p>Chaque compte est isolé. Vos clés d'accès (Lodgify, Nuki...) sont stockées chiffrées, hébergées en Europe et conformes RGPD.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="histoire" class="alt">
+    <div class="wrap story">
+      <div class="story-card">
+        <svg viewBox="0 0 300 220" fill="none" aria-hidden="true">
+          <rect x="10" y="10" width="280" height="200" rx="14" fill="none" stroke="var(--line)"/>
+          <g stroke="var(--brass)" stroke-width="1.4">
+            <rect x="30" y="30" width="110" height="80" rx="4"/>
+            <rect x="150" y="30" width="120" height="50" rx="4"/>
+            <rect x="150" y="90" width="120" height="60" rx="4"/>
+            <rect x="30" y="120" width="110" height="70" rx="4"/>
+          </g>
+          <circle cx="200" cy="55" r="4" fill="var(--clay)"/>
+          <circle cx="85" cy="70" r="4" fill="var(--moss)"/>
+        </svg>
+        <p style="font-size:0.85rem;color:var(--ink-soft);margin:0;">Plan d'un des logements gérés au quotidien avec Rocket Location.</p>
+      </div>
+      <div>
+        <span class="kicker">Notre premier client</span>
+        <h2 style="margin-bottom:20px;">LoussaHousing, la conciergerie qui a fait naître Rocket.</h2>
+        <blockquote>« Rocket Location est né de nos propres logements en location courte durée : on avait besoin d'un outil qui synchronise les réservations, gère les accès et coordonne le ménage sans jongler entre dix applications. »</blockquote>
+        <cite>LoussaHousing — premier utilisateur de Rocket Location</cite>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Intégrations</span>
+        <h2>Rocket se branche sur vos outils existants.</h2>
+      </div>
+      <div class="integrations">
+        <div class="integration"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18" stroke="currentColor" stroke-width="1.5"/></svg>Lodgify</div>
+        <div class="integration"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.2 4.5 5 .7-3.6 3.5.8 5-4.4-2.3L7.6 16.7l.8-5L4.8 8.2l5-.7L12 3z" stroke="currentColor" stroke-width="1.4"/></svg>Airbnb / Booking</div>
+        <div class="integration"><svg viewBox="0 0 24 24" fill="none"><rect x="6" y="9" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M9 9V6a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="1.5"/></svg>Nuki</div>
+        <div class="integration"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11l8-6 8 6v9H4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Home Assistant</div>
+        <div class="integration"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Homey</div>
+        <div class="integration"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.5"/></svg>IMAP / SMTP</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tarifs">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Tarifs</span>
+        <h2>Un prix par logement, sans surprise.</h2>
+        <p>Vous payez par logement et par mois, uniquement pour les briques activées. Prix indicatifs, hors taxes, dégressifs selon le nombre de logements.</p>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <h3>Rocket Host</h3>
+          <div class="price">10 €<small>/ logement / mois</small></div>
+          <ul>
+            <li>Tableau de bord du jour : arrivées, départs, alertes</li>
+            <li>Connexion à votre channel manager</li>
+            <li>Finances : revenus, dépenses, bilan</li>
+            <li>E-mails voyageurs et livret d'accueil</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://console.rocket.app/inscription?offre=rocket-host">Commencer l'essai</a>
+        </article>
+        <article class="plan featured">
+          <span class="badge">Le plus choisi</span>
+          <h3>Rocket Location</h3>
+          <div class="price">22 €<small>/ logement / mois</small></div>
+          <ul>
+            <li>Tout Rocket Host</li>
+            <li>Ménage : équipes, assistant vocal, photos, linge</li>
+            <li>Serrures, accès et domotique</li>
+            <li>Stock, linge et réassort</li>
+          </ul>
+          <a class="btn btn-primary" href="https://console.rocket.app/inscription?offre=rocket-location">Commencer l'essai</a>
+        </article>
+        <article class="plan">
+          <h3>Brique seule</h3>
+          <div class="price">dès 5 €<small>/ lieu / mois</small></div>
+          <ul>
+            <li>Rocket Clean pour une société de ménage</li>
+            <li>Rocket Lieux pour une maison ou des bureaux</li>
+            <li>Rocket Stock pour vos consommables</li>
+            <li>En SaaS, auto-hébergé ou par API</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://console.rocket.app/inscription?offre=brique">Choisir ma brique</a>
+        </article>
+      </div>
+      <div class="addons">
+        <table>
+          <thead><tr><th>Option</th><th>Contenu</th><th>Prix</th></tr></thead>
+          <tbody>
+            <tr><td>Rocket Clean</td><td>Ménages, assistant vocal, linge et blanchisserie, récurrences, lien sans compte</td><td class="p">+ 5 € / logement</td></tr>
+            <tr><td>Rocket Lieux</td><td>Serrures, accès, Home Assistant, Homey</td><td class="p">+ 4 € / logement</td></tr>
+            <tr><td>Rocket Stock</td><td>Articles, seuils, panier par magasin, Amazon, bons de commande, équipements</td><td class="p">+ 2 € / logement</td></tr>
+            <tr><td>Rocket Cast</td><td>Écran d'accueil sur la TV du logement</td><td class="p">+ 5 € / écran</td></tr>
+            <tr><td>Domaine personnalisé</td><td>Choisissez votre nom de domaine, on s'occupe de tout : réservation à votre nom, configuration et HTTPS. Votre application, votre livret et vos écrans à votre adresse. Vous pouvez aussi utiliser un domaine que vous avez déjà.</td><td class="p">+ 9 € / mois<br><small>+ prix du domaine</small></td></tr>
+            <tr><td>Boîtes partagées</td><td>Une boîte e-mail commune pour toute l'équipe</td><td class="p">+ 9 € / boîte</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pricing-notes">
+        <span class="chip">Minimum 29 € / mois</span>
+        <span class="chip">-15 % dès 10 logements · -25 % dès 30</span>
+        <span class="chip">2 mois offerts en annuel</span>
+        <span class="chip">Essai gratuit 30 jours</span>
+        <span class="chip">Mise en place accompagnée : sur devis</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Questions fréquentes</span>
+        <h2>Ce que l'on nous demande souvent.</h2>
+      </div>
+
+      <details class="faq-item">
+        <summary>Puis-je acheter une seule brique sans prendre toute la suite ?<svg class="plus" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg></summary>
+        <p>Oui. Chaque brique (PMS, Place, Mailer, Cloud, Doc Fusion, Dispatch...) est vendue indépendamment, en SaaS, en auto-hébergé avec licence, ou via API.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Mes clés Lodgify et Nuki sont-elles en sécurité ?<svg class="plus" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg></summary>
+        <p>Elles sont stockées chiffrées, propres à votre compte, et ne sont jamais partagées entre comptes. L'hébergement se fait en Europe, conformément au RGPD.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Rocket Lieux fonctionne-t-il pour un bureau ou une résidence secondaire ?<svg class="plus" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg></summary>
+        <p>Oui, Rocket Lieux gère tout type de lieu : domotique, serrures connectées, ménage, stock et documents, que ce soit un logement, une résidence secondaire ou un bureau.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Comment se passe la création des codes d'accès ?<svg class="plus" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg></summary>
+        <p>À chaque réservation synchronisée depuis Lodgify, Rocket Location prépare un code d'accès valable du jour d'arrivée au départ. Vous l'envoyez à la serrure (Nuki ou via votre box domotique) en un clic, et le livret du voyageur ne l'affiche qu'une fois actif.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Puis-je essayer Rocket avant de m'engager ?<svg class="plus" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg></summary>
+        <p>Demandez une démo via le formulaire ci-dessous : nous vous montrons Rocket Location sur un cas concret avant toute décision.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-info">
+        <span class="kicker">Contact</span>
+        <h2>Demandez une démo de Rocket Location.</h2>
+        <p>Décrivez-nous votre activité, nous vous montrons comment Rocket s'adapte à vos logements et à votre équipe. Vous préférez essayer seul ? <a href="https://console.rocket.app/inscription">Créez votre compte</a> : 30 jours gratuits, sans carte bancaire.</p>
+        <ul>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.5"/></svg>
+            bonjour@rocket.app
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="1.5"/></svg>
+            Hébergement en Europe, conforme RGPD
+          </li>
+        </ul>
+      </div>
+
+      <form class="demo" id="demoForm" novalidate>
+        <div class="two-col">
+          <div class="field">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+          </div>
+        </div>
+        <div class="field">
+          <label for="activite">Type d'activité</label>
+          <select id="activite" name="activite">
+            <option>Location courte durée</option>
+            <option>Conciergerie</option>
+            <option>Résidence secondaire</option>
+            <option>PME / bureaux</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Votre besoin</label>
+          <textarea id="message" name="message" placeholder="Nombre de logements, outils actuels, ce que vous cherchez..."></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Envoyer la demande</button>
+        <div class="form-msg" id="formMsg" role="status">Merci, votre demande a bien été enregistrée. Nous revenons vers vous rapidement pour organiser la démo.</div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <a class="footer-brand" href="#top">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3c4 3 6 8 6 13 0 3-1 5-2 6l-4 4-4-4c-1-1-2-3-2-6 0-5 2-10 6-13z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="14" r="2.6" fill="currentColor"/></svg>
+        Rocket
+      </a>
+      <nav class="footer-links" aria-label="Liens de pied de page">
+        <a href="#offres">Rocket Location</a>
+        <a href="#offres">Rocket Lieux</a>
+        <a href="#offres">Rocket Documents</a>
+        <a href="#tarifs">Tarifs</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Rocket. Suite logicielle pour l'hébergement et les lieux connectés.
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var form = document.getElementById('demoForm');
+  var msg = document.getElementById('formMsg');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    msg.classList.add('visible');
+    msg.setAttribute('tabindex','-1');
+    msg.focus();
+  });
+
+  var toggle = document.getElementById('themeToggle');
+  var label = document.getElementById('themeLabel');
+  var root = document.documentElement;
+
+  function currentIsDark(){
+    var attr = root.getAttribute('data-theme');
+    if(attr === 'dark') return true;
+    if(attr === 'light') return false;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function sync(){
+    var dark = currentIsDark();
+    toggle.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    label.textContent = dark ? 'Clair' : 'Sombre';
+  }
+
+  toggle.addEventListener('click', function(){
+    var dark = currentIsDark();
+    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+    sync();
+  });
+
+  sync();
+})();
+</script>
+</body>
+</html>
